@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BMW Referee Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <style>
+        /* --- BMW FONTS --- */
+        @font-face { 
+            font-family: 'BMWTypeNext'; 
+            src: url('https://meetyourmatch.event-bmw.vn/VN_BMWTypeNextLatin-Light.woff2') format('woff2'); 
+            font-weight: 300; 
+            font-style: normal; 
+            font-display: swap; 
+        }
+        @font-face { 
+            font-family: 'BMWTypeNext'; 
+            src: url('https://meetyourmatch.event-bmw.vn/VN_BMWTypeNextLatin-Regular.woff2') format('woff2'); 
+            font-weight: 400; 
+            font-style: normal; 
+            font-display: swap; 
+        }
+
+        /* --- GLOBAL STYLES --- */
+        body { 
+            font-family: 'BMWTypeNext', sans-serif; 
+            background-color: #000000; 
+            color: #ffffff; 
+            font-weight: 300; 
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, .bmw-bold, .score-font { 
+            font-family: 'BMWTypeNext', sans-serif; 
+            font-weight: 400; 
+        }
+
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        .fa-spin-fast { animation: fa-spin 0.7s infinite linear; }
+        .btn-press { transition: all 0.1s ease; }
+        .btn-press:active { transform: scale(0.97); opacity: 0.8; }
+
+        /* --- CUSTOM SELECT STYLING --- */
+        select { 
+            -webkit-appearance: none; 
+            appearance: none; 
+            background-image: none; 
+            cursor: pointer;
+        }
+
+        select option {
+            background-color: #333333 !important; 
+            color: #ffffff !important;
+            padding: 10px;
+        }
+
+        /* --- BMW UI COMPONENTS --- */
+        .bmw-card {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #1c69d4; 
+            color: white;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-outline:hover {
+            border-color: #ffffff;
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .bmw-input {
+            background-color: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 0;
+            padding: 10px 0;
+        }
+        .bmw-input:focus {
+            outline: none;
+            border-color: #1c69d4;
+            background-color: rgba(255, 255, 255, 0.05); 
+        }
+
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        .safe-area { padding-bottom: env(safe-area-inset-bottom); }
+        
+        /* Loading Overlay Animation */
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen h-[100dvh] w-screen flex flex-col bg-black bg-[url('https://www.bmw.com/content/dam/bmw/marketBMWCOM/bmw_com/categories/digital-journey/smart-materials/sm-00-teaser-high.jpg.asset.1670319985926.jpg')] bg-cover bg-center overflow-hidden">
+    
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm z-0"></div>
+
+    <!-- Header Logo -->
+    <div id="main-logo" class="relative z-10 w-full pt-4 pb-2 flex justify-center items-center shrink-0 transition-opacity duration-300">
+        <img src="https://d.thaco.link/bmw/l-logo.png" alt="BMW Logo" class="h-10 w-10 object-contain drop-shadow-lg">
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="relative z-10 flex-1 w-full max-w-md mx-auto flex flex-col p-4 overflow-y-auto safe-area">
+
+        <!-- 1. Màn hình Chọn Hạng Mục -->
+        <div id="category-screen" class="flex flex-col gap-6 h-full justify-center animate-fade-in min-h-[400px]">
+            <h2 class="text-2xl text-center text-white tracking-widest uppercase mb-4 bmw-bold border-b border-gray-700 pb-4">
+                Chọn Hạng Mục
+            </h2>
+            
+            <button onclick="selectCategory('team')" 
+                class="btn-outline w-full py-5 text-xl font-light flex items-center justify-between px-6 btn-press group">
+                <span>Đôi Nam</span>
+                <i class="fas fa-chevron-right text-sm text-gray-500 group-hover:text-white transition"></i>
+            </button>
+
+            <button onclick="selectCategory('mixed')" 
+                class="btn-outline w-full py-5 text-xl font-light flex items-center justify-between px-6 btn-press group">
+                <span>Đôi Nam Nữ</span>
+                <i class="fas fa-chevron-right text-sm text-gray-500 group-hover:text-white transition"></i>
+            </button>
+        </div>
+
+        <!-- 2. Màn hình Chọn Giai Đoạn -->
+        <div id="stage-screen" class="hidden flex flex-col gap-6 h-full justify-center min-h-[400px]">
+            <div class="w-full flex items-center justify-between border-b border-gray-700 pb-4 mb-2">
+                <button onclick="backToCategory()" class="text-gray-400 hover:text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <div class="text-right">
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest">Hạng mục</div>
+                    <div class="text-lg bmw-bold text-white uppercase" id="selected-cat-name">...</div>
+                </div>
+            </div>
+
+            <button onclick="selectStage('group')" 
+                class="btn-outline w-full py-6 text-xl font-light flex items-center justify-between px-6 btn-press border-l-4 border-l-white">
+                <span>Vòng Bảng</span>
+                <i class="fas fa-th-list text-gray-500"></i>
+            </button>
+
+            <button onclick="selectStage('knockout')" 
+                class="btn-primary w-full py-6 text-xl font-light flex items-center justify-between px-6 btn-press shadow-lg shadow-blue-900/20">
+                <span>Vòng Knockout</span>
+                <i class="fas fa-trophy"></i>
+            </button>
+        </div>
+
+        <!-- 3a. Setup Knockout -->
+        <div id="knockout-setup" class="hidden flex flex-col gap-6 h-full justify-center min-h-[400px]">
+            <div class="w-full flex items-center justify-between border-b border-gray-700 pb-4">
+                <button onclick="backToStage()" class="text-gray-400 hover:text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <h2 class="text-xl bmw-bold text-white uppercase tracking-wider">Chọn Trận Đấu</h2>
+            </div>
+            
+            <div class="relative w-full">
+                <label class="text-[10px] text-gray-400 uppercase tracking-widest mb-1 block">Danh sách trận</label>
+                <select id="match-select" class="bmw-input w-full text-lg appearance-none py-3 pr-8">
+                    <option value="" disabled selected>Đang tải...</option>
+                </select>
+                <div class="pointer-events-none absolute bottom-4 right-0 text-blue-500">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <button onclick="startMatch()" id="btn-start-ko" disabled 
+                class="btn-primary w-full py-4 text-lg mt-8 btn-press">
+                Vào Bảng Điểm
+            </button>
+            <p id="ko-status" class="text-center text-xs text-gray-500 mt-2 font-light">...</p>
+        </div>
+
+        <!-- 4a. Scoreboard Knockout -->
+        <div id="scoreboard" class="hidden flex-col fixed inset-0 h-[100dvh] bg-black z-50 overflow-y-auto w-full">
+            <div class="min-h-full flex flex-col">
+                <div class="w-full px-4 py-3 flex items-center justify-between border-b border-gray-800 bg-black/90 sticky top-0 z-40">
+                    <button onclick="backToMatchSelect()" class="text-gray-400 hover:text-white p-2">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                    
+                    <div class="flex flex-col items-center">
+                        <span id="display-id" class="text-xl bmw-bold text-white leading-none">...</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span id="display-status-text" class="text-[10px] uppercase tracking-[0.2em] text-gray-500">LOADING</span>
+                            <button onclick="forceSyncMatch()" class="text-gray-500 hover:text-blue-500 transition">
+                                <i id="ko-sync-icon" class="fas fa-sync-alt text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <span class="text-[10px] text-gray-500 uppercase tracking-widest block">Sân</span>
+                        <span id="display-field" class="text-sm bmw-bold text-blue-500">...</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col md:flex-row items-center justify-center p-2 gap-2 relative">
+                    <div id="finished-overlay" class="hidden absolute inset-0 z-30 bg-black/90 backdrop-blur flex flex-col items-center justify-center">
+                        <div class="border border-white/20 p-8 rounded-none bg-white/5 text-center">
+                            <h1 class="text-3xl text-red-500 bmw-bold uppercase tracking-widest mb-2">Đã Kết Thúc</h1>
+                            <p class="text-gray-400 text-sm font-light">Trận đấu đã dừng tính điểm</p>
+                            <button onclick="reopenMatch()" class="mt-6 btn-outline px-6 py-2 text-sm">Mở Lại</button>
+                        </div>
+                    </div>
+
+                    <!-- Team 1 -->
+                    <div class="flex-1 w-full flex flex-col justify-between p-2 bmw-card rounded-sm border-t-2 border-t-white relative min-h-[200px]">
+                        <h3 id="name-1" class="text-lg md:text-3xl text-center text-gray-300 font-light truncate px-2">Đội 1</h3>
+                        <div class="flex-1 flex items-center justify-center py-2">
+                            <span id="score-1" class="score-font text-[5rem] md:text-[10rem] leading-none text-white bmw-bold drop-shadow-2xl">0</span>
+                        </div>
+                        <div class="flex gap-2 h-14 w-full">
+                            <button onclick="adjustScore(1, -1)" class="score-btn w-1/3 bg-gray-800 hover:bg-gray-700 text-gray-400 text-2xl rounded-sm btn-press flex items-center justify-center"><i class="fas fa-minus"></i></button>
+                            <button onclick="adjustScore(1, 1)" class="score-btn w-2/3 bg-blue-600 hover:bg-blue-500 text-white text-3xl rounded-sm btn-press shadow-lg shadow-blue-900/40 flex items-center justify-center"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- VS -->
+                    <div class="text-gray-700 font-light text-sm md:rotate-0 rotate-90 py-1">VS</div>
+
+                    <!-- Team 2 -->
+                    <div class="flex-1 w-full flex flex-col justify-between p-2 bmw-card rounded-sm border-t-2 border-t-blue-600 relative min-h-[200px]">
+                        <h3 id="name-2" class="text-lg md:text-3xl text-center text-gray-300 font-light truncate px-2">Đội 2</h3>
+                        <div class="flex-1 flex items-center justify-center py-2">
+                            <span id="score-2" class="score-font text-[5rem] md:text-[10rem] leading-none text-blue-500 bmw-bold drop-shadow-2xl">0</span>
+                        </div>
+                        <div class="flex gap-2 h-14 w-full">
+                            <button onclick="adjustScore(2, -1)" class="score-btn w-1/3 bg-gray-800 hover:bg-gray-700 text-gray-400 text-2xl rounded-sm btn-press flex items-center justify-center"><i class="fas fa-minus"></i></button>
+                            <button onclick="adjustScore(2, 1)" class="score-btn w-2/3 bg-blue-600 hover:bg-blue-500 text-white text-3xl rounded-sm btn-press shadow-lg shadow-blue-900/40 flex items-center justify-center"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-black/90 border-t border-gray-800 safe-area mt-auto">
+                    <button id="btn-start-match" onclick="changeMatchStatus('Ongoing')" 
+                        class="hidden w-full btn-primary py-3 text-base font-light tracking-widest shadow-[0_0_15px_rgba(28,105,212,0.4)]">
+                        START MATCH
+                    </button>
+                    <button id="btn-finish-match" onclick="changeMatchStatus('Finished')" 
+                        class="hidden w-full btn-outline py-3 text-base font-light tracking-widest border-red-900 text-red-500 hover:bg-red-900/20 hover:border-red-500 hover:text-red-400 transition-colors">
+                        FINISH MATCH
+                    </button>
+                    <div id="sync-status" class="text-center text-[10px] text-gray-600 uppercase tracking-widest mt-2 font-mono">
+                        System Ready
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3b. Vòng Bảng UI -->
+        <div id="group-stage-ui" class="hidden flex-col fixed inset-0 h-[100dvh] bg-black z-50 overflow-y-auto w-full">
+            <div class="min-h-full flex flex-col">
+                <div class="w-full p-4 pb-2 border-b border-gray-800 bg-black/90 sticky top-0 z-40">
+                    <div class="flex items-center justify-between mb-4">
+                        <button onclick="backToStage()" class="text-gray-400 hover:text-white text-sm uppercase tracking-wider flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <h2 class="text-lg bmw-bold text-white uppercase tracking-wider">Vòng Bảng</h2>
+                    </div>
+                    <div class="relative w-full mb-2">
+                        <select id="group-select" onchange="renderGroupTeams()" class="bmw-input w-full text-2xl py-2 appearance-none">
+                            <option value="">Đang tải...</option>
+                        </select>
+                        <div class="pointer-events-none absolute bottom-4 right-0 text-blue-500">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="group-team-list" class="flex-1 p-4 space-y-4">
+                    <div class="text-center text-gray-600 mt-20 font-light">Chọn bảng đấu để hiển thị</div>
+                </div>
+                
+                <div class="py-2 text-center bg-black border-t border-gray-800 safe-area mt-auto">
+                    <span id="group-sync-status" class="text-[10px] text-gray-600 uppercase tracking-widest font-mono">Ready</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GLOBAL LOADING OVERLAY -->
+        <div id="loading-overlay" class="hidden fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center">
+            <img src="https://d.thaco.link/bmw/l-logo.png" class="w-20 h-20 object-contain drop-shadow-2xl animate-bounce mb-8">
+            <div class="text-blue-500 bmw-bold text-xl tracking-[0.3em] animate-pulse">LOADING DATA...</div>
+        </div>
+
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxUS7U8RhrhC98oAOtsBVr-ixrT1GyL1iFTY9OP3DhzasnQ34__x95ZhjsaxfeapXqsAA/exec'; 
+
+        const CONFIG = {
+            team: { name: "Đôi Nam", knockout: "knockout", group: "vongloai" },
+            mixed: { name: "Đôi Nam Nữ", knockout: "knockout2", group: "vongloai2" }
+        };
+
+        let selectedCategoryKey = ""; 
+        let currentSheetName = ""; 
+        let groupDataCache = {}; 
+        let currentMatchId = "";
+        let currentStatus = "";
+        let scores = { team1: 0, team2: 0 };
+        let updateTimeout = null;
+        let matchListData = [];
+
+        // --- Utils ---
+        function toggleLogo(show) {
+            const logo = document.getElementById('main-logo');
+            if(show) logo.classList.remove('hidden');
+            else logo.classList.add('hidden');
+        }
+
+        function showLoadingOverlay(show) {
+            const overlay = document.getElementById('loading-overlay');
+            if(show) overlay.classList.remove('hidden');
+            else overlay.classList.add('hidden');
+        }
+
+        // --- URL Management ---
+        function updateURL(params) {
+            const url = new URL(window.location);
+            Object.keys(params).forEach(key => {
+                if (params[key] === null) {
+                    url.searchParams.delete(key);
+                } else {
+                    url.searchParams.set(key, params[key]);
+                }
+            });
+            window.history.pushState({}, '', url);
+        }
+
+        // --- Navigation ---
+        function selectCategory(key) {
+            selectedCategoryKey = key;
+            updateURL({ cat: key });
+            
+            document.getElementById('category-screen').classList.add('hidden');
+            document.getElementById('stage-screen').classList.remove('hidden');
+            document.getElementById('stage-screen').classList.add('flex'); 
+            document.getElementById('selected-cat-name').textContent = CONFIG[key].name;
+            toggleLogo(true);
+        }
+
+        function backToCategory() {
+            updateURL({ cat: null, stage: null, id: null, group: null });
+            
+            document.getElementById('stage-screen').classList.add('hidden');
+            document.getElementById('stage-screen').classList.remove('flex');
+            document.getElementById('category-screen').classList.remove('hidden');
+            toggleLogo(true);
+        }
+
+        function selectStage(stageType) {
+            updateURL({ stage: stageType });
+            
+            document.getElementById('stage-screen').classList.add('hidden');
+            document.getElementById('stage-screen').classList.remove('flex');
+            
+            if (stageType === 'knockout') {
+                currentSheetName = CONFIG[selectedCategoryKey].knockout;
+                document.getElementById('knockout-setup').classList.remove('hidden');
+                document.getElementById('knockout-setup').classList.add('flex');
+                loadMatchList(currentSheetName);
+                toggleLogo(true);
+            } else {
+                currentSheetName = CONFIG[selectedCategoryKey].group;
+                // Vòng bảng vào thẳng giao diện chỉnh sửa
+                loadGroupData(currentSheetName); 
+            }
+        }
+
+        function backToStage() {
+            updateURL({ id: null, group: null });
+
+            document.getElementById('knockout-setup').classList.add('hidden');
+            document.getElementById('knockout-setup').classList.remove('flex');
+            document.getElementById('scoreboard').classList.add('hidden');
+            document.getElementById('scoreboard').classList.remove('flex');
+            document.getElementById('group-stage-ui').classList.add('hidden');
+            document.getElementById('group-stage-ui').classList.remove('flex');
+            
+            document.getElementById('stage-screen').classList.remove('hidden');
+            document.getElementById('stage-screen').classList.add('flex');
+            toggleLogo(true);
+        }
+
+        // --- Group Logic ---
+        async function loadGroupData(sheet) {
+            showLoadingOverlay(true);
+            
+            try {
+                const res = await fetch(`${API_URL}?action=get_group_data&sheet=${sheet}`);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                groupDataCache = data.groups;
+                
+                const select = document.getElementById('group-select');
+                const listContainer = document.getElementById('group-team-list');
+                const groupNames = Object.keys(groupDataCache).sort();
+
+                if (groupNames.length === 0) {
+                    select.innerHTML = '<option>No Data</option>';
+                    listContainer.innerHTML = '<div class="text-center text-gray-500">Empty</div>';
+                } else {
+                    select.innerHTML = '<option value="" disabled selected>Chọn Bảng</option>';
+                    groupNames.forEach(g => {
+                        const opt = document.createElement('option');
+                        opt.value = g;
+                        opt.textContent = `Bảng ${g}`;
+                        select.appendChild(opt);
+                    });
+                    listContainer.innerHTML = '<div class="text-center text-gray-600 mt-20 font-light">Chọn bảng đấu ở trên</div>';
+                }
+
+                document.getElementById('group-stage-ui').classList.remove('hidden');
+                document.getElementById('group-stage-ui').classList.add('flex');
+                toggleLogo(false); 
+                
+                // Auto select group from URL if present
+                const params = new URLSearchParams(window.location.search);
+                const groupParam = params.get('group');
+                if (groupParam && groupDataCache[groupParam]) {
+                    select.value = groupParam;
+                    renderGroupTeams();
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi tải dữ liệu vòng bảng!");
+                backToStage(); 
+            } finally {
+                showLoadingOverlay(false);
+            }
+        }
+
+        function renderGroupTeams() {
+            const groupName = document.getElementById('group-select').value;
+            const container = document.getElementById('group-team-list');
+            
+            if (!groupName || !groupDataCache[groupName]) return;
+            
+            // Update URL
+            updateURL({ group: groupName });
+
+            const teams = groupDataCache[groupName];
+            container.innerHTML = '';
+
+            teams.forEach(team => {
+                const div = document.createElement('div');
+                div.className = "bmw-card p-4 flex items-center justify-between border-l-2 border-l-blue-600 relative overflow-hidden";
+                div.innerHTML = `
+                    <div class="flex-1 pr-4">
+                        <div class="text-lg text-white font-light tracking-wide truncate">${team.name}</div>
+                        <div class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Points</div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button onclick="updateGroupScore('${team.name}', -1, this)" class="w-10 h-10 border border-gray-700 hover:border-white text-gray-400 hover:text-white rounded-sm transition flex items-center justify-center btn-press"><i class="fas fa-minus"></i></button>
+                        <span class="w-8 text-center text-2xl bmw-bold text-white score-val">${team.score}</span>
+                        <button onclick="updateGroupScore('${team.name}', 1, this)" class="w-10 h-10 bg-blue-600 hover:bg-blue-500 text-white rounded-sm transition flex items-center justify-center btn-press shadow-lg shadow-blue-900/30"><i class="fas fa-plus"></i></button>
+                        
+                        <div class="w-[1px] h-8 bg-gray-800 mx-1"></div>
+                        <button onclick="updateGroupScore('${team.name}', 0, this)" class="text-gray-600 hover:text-blue-500 transition px-2" title="Sync">
+                            <i class="fas fa-sync-alt text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function updateGroupScore(teamName, delta, btnElement) {
+            const parentDiv = btnElement.closest('div').parentElement;
+            const scoreSpan = parentDiv.querySelector('.score-val');
+            const syncIcon = parentDiv.querySelector('.fa-sync-alt');
+            
+            let currentScore = parseInt(scoreSpan.textContent);
+            let newScore = currentScore + delta;
+            if (newScore < 0) newScore = 0;
+            
+            scoreSpan.textContent = newScore;
+            
+            const groupName = document.getElementById('group-select').value;
+            const teamObj = groupDataCache[groupName].find(t => t.name === teamName);
+            if (teamObj) teamObj.score = newScore;
+
+            setSyncStatus(`Saving ${teamName}...`, "yellow", "group-sync-status");
+            if(syncIcon) syncIcon.classList.add('fa-spin-fast');
+
+            try {
+                const url = `${API_URL}?action=update_group_score&sheet=${currentSheetName}&team=${encodeURIComponent(teamName)}&score=${newScore}`;
+                await fetch(url);
+                setSyncStatus("Saved", "green", "group-sync-status");
+            } catch (e) {
+                console.error(e);
+                setSyncStatus("Error Saving!", "red", "group-sync-status");
+                if(delta !== 0) scoreSpan.textContent = currentScore;
+            } finally {
+                if(syncIcon) syncIcon.classList.remove('fa-spin-fast');
+            }
+        }
+
+        // --- Knockout Logic ---
+        function backToMatchSelect() {
+            updateURL({ id: null });
+            
+            document.getElementById('scoreboard').classList.add('hidden');
+            document.getElementById('scoreboard').classList.remove('flex');
+            document.getElementById('knockout-setup').classList.remove('hidden');
+            document.getElementById('knockout-setup').classList.add('flex');
+            toggleLogo(true);
+        }
+
+        async function loadMatchList(sheet) {
+            const select = document.getElementById('match-select');
+            const btn = document.getElementById('btn-start-ko');
+            const status = document.getElementById('ko-status');
+
+            status.textContent = "Loading matches...";
+            select.innerHTML = '<option>Loading...</option>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}?action=get_match_list&sheet=${sheet}`);
+                const data = await res.json();
+                matchListData = data.matches;
+
+                select.innerHTML = '<option value="" disabled selected>Chọn trận đấu</option>';
+                if (!matchListData || matchListData.length === 0) {
+                    status.textContent = "No matches found."; return;
+                }
+                matchListData.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id;
+                    opt.textContent = `${m.id} | ${m.team1} vs ${m.team2} (${m.field})`;
+                    select.appendChild(opt);
+                });
+                btn.disabled = false;
+                status.textContent = `${matchListData.length} matches available.`;
+            } catch (err) {
+                status.textContent = "Connection Error.";
+            }
+        }
+
+        function startMatch() {
+            const id = document.getElementById('match-select').value;
+            if(!id) return;
+            currentMatchId = id;
+            updateURL({ id: id });
+            loadMatchData(id);
+        }
+
+        async function loadMatchData(id) {
+            showLoadingOverlay(true);
+            
+            try {
+                const res = await fetch(`${API_URL}?action=get_score&id=${id}&sheet=${currentSheetName}`);
+                const data = await res.json();
+                
+                if(data.found) {
+                    scores.team1 = parseInt(data.score1)||0;
+                    scores.team2 = parseInt(data.score2)||0;
+                    currentStatus = data.status || "";
+                    
+                    // Update UI directly from API response for robustness
+                    document.getElementById('display-id').textContent = id;
+                    document.getElementById('name-1').textContent = data.team1;
+                    document.getElementById('name-2').textContent = data.team2;
+                    document.getElementById('display-field').textContent = data.field;
+                    
+                    updateScoreUI();
+                    updateStatusUI();
+                    setSyncStatus("System Ready", "green");
+                    
+                    document.getElementById('knockout-setup').classList.add('hidden');
+                    document.getElementById('knockout-setup').classList.remove('flex');
+                    document.getElementById('scoreboard').classList.remove('hidden');
+                    document.getElementById('scoreboard').classList.add('flex');
+                    toggleLogo(false); 
+                } else {
+                    alert("Không tìm thấy dữ liệu!");
+                    updateURL({ id: null });
+                }
+            } catch(e) {
+                alert("Lỗi tải dữ liệu!");
+                updateURL({ id: null });
+            } finally {
+                showLoadingOverlay(false);
+            }
+        }
+
+        function updateStatusUI() {
+            const btnStart = document.getElementById('btn-start-match');
+            const btnFinish = document.getElementById('btn-finish-match');
+            const overlay = document.getElementById('finished-overlay');
+            const txt = document.getElementById('display-status-text');
+
+            if (!currentStatus || (currentStatus !== 'Ongoing' && currentStatus !== 'Finished')) {
+                txt.textContent = "NOT STARTED"; txt.className="text-[10px] bmw-bold uppercase tracking-[0.2em] text-gray-600";
+                btnStart.classList.remove('hidden'); btnFinish.classList.add('hidden'); overlay.classList.add('hidden');
+            } else if (currentStatus === 'Ongoing') {
+                txt.textContent = "LIVE"; txt.className="text-[10px] bmw-bold uppercase tracking-[0.2em] text-green-500 animate-pulse";
+                btnStart.classList.add('hidden'); btnFinish.classList.remove('hidden'); overlay.classList.add('hidden');
+            } else if (currentStatus === 'Finished') {
+                txt.textContent = "FINISHED"; txt.className="text-[10px] bmw-bold uppercase tracking-[0.2em] text-red-500";
+                btnStart.classList.add('hidden'); btnFinish.classList.add('hidden'); overlay.classList.remove('hidden');
+            }
+        }
+
+        async function changeMatchStatus(st) {
+            if(st==='Finished' && !confirm("Confirm Match Finish?")) return;
+            const old = currentStatus;
+            currentStatus = st; updateStatusUI();
+            try {
+                await fetch(`${API_URL}?action=update_status&sheet=${currentSheetName}&id=${currentMatchId}&status=${st}`);
+            } catch(e) { currentStatus = old; updateStatusUI(); }
+        }
+        
+        function reopenMatch() { if(confirm("Re-open Match?")) changeMatchStatus('Ongoing'); }
+
+        function adjustScore(team, delta) {
+            if(currentStatus !== 'Ongoing') return;
+            if(team===1) scores.team1 = Math.max(0, scores.team1+delta);
+            else scores.team2 = Math.max(0, scores.team2+delta);
+            updateScoreUI();
+            
+            if(updateTimeout) clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(() => {
+                sendMatchScoreUpdate();
+            }, 800);
+        }
+
+        async function sendMatchScoreUpdate() {
+            setSyncStatus("Saving...", "yellow");
+            const icon = document.getElementById('ko-sync-icon');
+            if(icon) icon.classList.add('fa-spin-fast');
+
+            try {
+                await fetch(`${API_URL}?action=update_score&sheet=${currentSheetName}&id=${currentMatchId}&s1=${scores.team1}&s2=${scores.team2}`);
+                setSyncStatus("Saved", "green");
+            } catch (error) {
+                console.error(error);
+                setSyncStatus("Save Failed!", "red");
+            } finally {
+                if(icon) icon.classList.remove('fa-spin-fast');
+            }
+        }
+
+        function forceSyncMatch() {
+            if(!currentMatchId) return;
+            if(updateTimeout) clearTimeout(updateTimeout);
+            sendMatchScoreUpdate();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score-1').textContent = scores.team1;
+            document.getElementById('score-2').textContent = scores.team2;
+        }
+
+        function setSyncStatus(msg, color, elementId = 'sync-status') {
+            const el = document.getElementById(elementId);
+            const colorHex = color === 'green' ? '#22c55e' : (color === 'yellow' ? '#eab308' : '#ef4444');
+            el.innerHTML = `<span style="color:${colorHex}">●</span> ${msg}`;
+        }
+
+        // --- APP INITIALIZATION ---
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            const cat = params.get('cat');
+            const stage = params.get('stage');
+            const id = params.get('id');
+
+            if (cat && CONFIG[cat]) {
+                // Restore Category
+                selectCategory(cat);
+                
+                if (stage) {
+                    // Restore Stage
+                    selectStage(stage);
+                    
+                    if (stage === 'knockout' && id) {
+                        // Restore Knockout Match
+                        currentMatchId = id;
+                        loadMatchData(id);
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
