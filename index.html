@@ -87,11 +87,9 @@
             .mobile-tabs, .mobile-category-selector { display: flex; }
             .dashboard-layout { flexDirection: column; padding: 10px; height: auto; }
             
-            /* Logic expand mới: Bỏ màu nền và border khi expand */
             .match-expanded {
                 display: block; 
                 animation: expandFade 0.3s ease-out;
-                /* Đã bỏ background gradient và border tại đây để style phẳng theo yêu cầu */
             }
             .match-collapsed { display: none; }
             @keyframes expandFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -168,10 +166,16 @@
     <div class="bg-fixed-layer"></div>
     <div class="bg-overlay"></div>
 
-    <button onclick="toggleTheme()" class="hidden lg:flex theme-switch-btn fixed bottom-4 right-4 z-[100] w-10 h-10 items-center justify-center rounded-full shadow-lg">
-        <i class="fas fa-moon dark:hidden"></i>
-        <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
-    </button>
+    <!-- DESKTOP FLOATING CONTROLS -->
+    <div class="hidden lg:flex fixed bottom-4 right-4 z-[100] gap-2">
+        <button onclick="manualRefresh()" id="btn-sync-desktop" class="theme-switch-btn w-10 h-10 flex items-center justify-center rounded-full shadow-lg" title="Cập nhật dữ liệu">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        <button onclick="toggleTheme()" class="theme-switch-btn w-10 h-10 flex items-center justify-center rounded-full shadow-lg" title="Chế độ Sáng/Tối">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
+        </button>
+    </div>
 
     <!-- HEADER -->
     <header class="h-[60px] lg:h-[8vh] flex items-center justify-between px-4 lg:px-[3vw] bg-white/90 dark:bg-bmw-dark/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 relative z-50 shrink-0 shadow-sm transition-colors duration-500">
@@ -185,22 +189,44 @@
             </div>
         </div>
 
+        <!-- SPONSORS DESKTOP -->
         <div class="hidden lg:flex items-center gap-6 mx-auto h-full py-1">
             <span class="text-[0.8vh] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mr-2 border-r border-gray-300 dark:border-gray-700 pr-4 h-[3vh] flex items-center">Nhà tài trợ</span>
             <div class="flex items-center gap-4">
-                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 1</span></div>
-                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 2</span></div>
-                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 3</span></div>
-                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 4</span></div>
-                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 5</span></div>
+                <!-- Sponsor 1 -->
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors overflow-hidden">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
+                <!-- Sponsor 2 -->
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors overflow-hidden">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
+                <!-- Sponsor 3 -->
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors overflow-hidden">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
+                <!-- Sponsor 4 -->
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors overflow-hidden">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
             </div>
         </div>
         
         <div class="flex items-center gap-2">
+            <!-- Mobile Sync Button -->
+            <button onclick="manualRefresh()" id="btn-sync-mobile" class="lg:hidden w-8 h-8 rounded-full bg-gray-100 dark:bg-[#222] flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                <i class="fas fa-sync-alt text-xs"></i>
+            </button>
+            <!-- Mobile Theme Button -->
             <button onclick="toggleTheme()" class="lg:hidden w-8 h-8 rounded-full bg-gray-100 dark:bg-[#222] flex items-center justify-center text-gray-600 dark:text-yellow-400 border border-gray-200 dark:border-gray-700">
                 <i class="fas fa-moon dark:hidden text-xs"></i>
                 <i class="fas fa-sun hidden dark:block text-xs"></i>
             </button>
+            
             <div class="hidden lg:flex bg-gray-100 dark:bg-[#1a1a1a] rounded p-1 border border-gray-200 dark:border-gray-700 gap-1 transition-colors">
                 <button onclick="switchCategory('mixed')" id="btn-cat-mixed-dt" class="btn-cat-active px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300">Đôi Nam-Nữ</button>
                 <button onclick="switchCategory('men')" id="btn-cat-men-dt" class="btn-cat-inactive px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300">Đôi Nam</button>
@@ -209,10 +235,8 @@
     </header>
 
     <!-- MOBILE BANNER (LINK PLACEHOLDER 16:9) -->
-    <!-- Đặt trước mobile-nav-wrapper để khi scroll thì banner trôi đi, còn nav sẽ sticky -->
     <div class="lg:hidden w-full aspect-video bg-gray-200 dark:bg-gray-800 relative group overflow-hidden">
         <a href="#" class="block w-full h-full">
-            <!-- Placeholder Image (Thay link ảnh banner thật vào đây) -->
             <img src="https://meetyourmatch.event-bmw.vn/result/theicon_result.jpg" alt="Mobile Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
         </a>
@@ -235,7 +259,7 @@
 
         <!-- SECTION 1: GROUPS -->
         <section id="section-groups" class="lg:block lg:h-full w-full lg:w-[90vw] lg:mx-auto mt-4 lg:mt-0 pt-2 lg:pt-0 border-b lg:border-b-0 border-gray-200 dark:border-gray-800 pb-4 lg:pb-0">
-            <div id="loading-groups" class="hidden text-center text-gray-500 text-sm">Loading Groups...</div>
+            <!-- Removed Loading Indicator for silent update -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 lg:grid-rows-1 gap-4 lg:gap-x-[0.5vw] lg:h-full justify-center" id="groups-container">
                 <!-- Groups injected via JS -->
             </div>
@@ -243,9 +267,7 @@
 
         <!-- SECTION 2: BRACKET -->
         <section id="section-bracket" class="hidden lg:h-[80vh] w-full lg:w-[90vw] lg:mx-auto flex-col lg:flex-row relative lg:mt-0 lg:border-t border-gray-200 dark:border-gray-800 pt-[1vh]">
-            <div id="loading-knockout" class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-black/80 z-10 hidden">
-                <div class="text-bmw-blue text-scale-lg animate-pulse font-bold">LOADING...</div>
-            </div>
+            <!-- Removed Loading Overlay for silent update -->
 
             <div class="w-full h-full flex flex-col lg:flex-row overflow-x-auto lg:overflow-visible pb-10 lg:pb-0">
                 
@@ -303,11 +325,21 @@
         <div class="container mx-auto h-full px-4 flex flex-col items-center justify-center gap-3">
             <div class="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest whitespace-nowrap">Đơn vị tài trợ</div>
             <div class="flex flex-wrap justify-center gap-2 w-full px-2">
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 1</span></div>
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 2</span></div>
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 3</span></div>
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 4</span></div>
-                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 5</span></div>
+                 <!-- Sponsor 1 -->
+                 <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0 overflow-hidden h-[40px]">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
+                 <!-- Sponsor 2 -->
+                 <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0 overflow-hidden h-[40px]">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
+                 <!-- Sponsor 3 -->
+                 <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0 overflow-hidden h-[40px]">
+                    <img src="" class="h-full w-full object-contain dark:hidden" alt="Sponsor Light">
+                    <img src="" class="h-full w-full object-contain hidden dark:block" alt="Sponsor Dark">
+                </div>
             </div>
         </div>
     </footer>
@@ -345,6 +377,18 @@
             } else {
                 logo.src = LIGHT_LOGO;
             }
+        }
+
+        // New Feature: Auto Switch Category
+        function startAutoSwitch() {
+            setInterval(() => {
+                // Chỉ chạy trên Desktop (độ rộng >= 1024px)
+                if (window.innerWidth >= 1024) {
+                    const nextCat = currentCategory === 'mixed' ? 'men' : 'mixed';
+                    console.log('Auto switching to:', nextCat);
+                    switchCategory(nextCat);
+                }
+            }, 10000); // 10000ms = 10s
         }
 
         function switchCategory(catId) {
@@ -418,41 +462,53 @@
 
         function getVal(cell) { return cell ? (cell.v !== null ? cell.v : '') : ''; }
 
-        async function refreshData() {
+        function manualRefresh() {
+            refreshData(true);
+        }
+
+        async function refreshData(isManual = false) {
+            // Visual feedback for manual sync (spin icon)
+            const desktopIcon = document.querySelector('#btn-sync-desktop i');
+            const mobileIcon = document.querySelector('#btn-sync-mobile i');
+            if (desktopIcon) desktopIcon.classList.add('fa-spin');
+            if (mobileIcon) mobileIcon.classList.add('fa-spin');
+
             const currentSheets = CATEGORIES[currentCategory];
+            // Capture state
             const expandedIds = Array.from(document.querySelectorAll('.match-expanded')).map(el => el.id);
             const expandedGroups = Array.from(document.querySelectorAll('[id^="g-detail-"]:not(.hidden)')).map(el => el.id);
 
-            document.getElementById('loading-groups').style.display = 'block';
-            document.getElementById('loading-knockout').style.display = 'flex';
+            // Removed explicit loading indicators to prevent layout shifts
+            try {
+                const [groupsRows, knockoutRows] = await Promise.all([
+                    fetchSheetData(currentSheets.groups),
+                    fetchSheetData(currentSheets.knockout)
+                ]);
 
-            const [groupsRows, knockoutRows] = await Promise.all([
-                fetchSheetData(currentSheets.groups),
-                fetchSheetData(currentSheets.knockout)
-            ]);
+                renderGroups(processGroupsData(groupsRows));
+                renderBracket(processKnockoutData(knockoutRows));
 
-            renderGroups(processGroupsData(groupsRows));
-            renderBracket(processKnockoutData(knockoutRows));
-
-            document.getElementById('loading-groups').style.display = 'none';
-            document.getElementById('loading-knockout').style.display = 'none';
-
-            expandedIds.forEach(id => { const el = document.getElementById(id); if(el) { el.classList.remove('match-collapsed'); el.classList.add('match-expanded'); } });
-            expandedGroups.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+                // Restore state
+                expandedIds.forEach(id => { const el = document.getElementById(id); if(el) { el.classList.remove('match-collapsed'); el.classList.add('match-expanded'); } });
+                expandedGroups.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+            } catch (e) {
+                console.error("Refresh failed:", e);
+            } finally {
+                // Stop spinning
+                if (desktopIcon) desktopIcon.classList.remove('fa-spin');
+                if (mobileIcon) mobileIcon.classList.remove('fa-spin');
+            }
         }
 
         function processGroupsData(rows) {
             const groups = {}; 
             teamPlayersMap = {}; 
             
-            // UPDATED: Capture index for stable sort
             rows.forEach((row, index) => {
                 const c = row.c; if (!c || c.length === 0) return;
                 
                 const groupName = getVal(c[0]); 
                 const teamName = getVal(c[1]); 
-                
-                // UPDATED: Points and Wins now both from Column C (index 2)
                 const points = getVal(c[2]); 
                 const players = getVal(c[5]); 
 
@@ -465,7 +521,7 @@
                     p: points === '' ? 0 : Number(points), 
                     w: points === '' ? 0 : Number(points),
                     players: players || '',
-                    originalIndex: index // UPDATED: Store Excel row index
+                    originalIndex: index 
                 });
             });
             return groups;
@@ -510,18 +566,11 @@
 
             displayKeys.forEach(groupName => {
                 const teams = data[groupName];
-                
-                // UPDATED: Logic Sort
                 teams.sort((a, b) => {
-                    // 1. Point High > Low
-                    if (b.p !== a.p) {
-                        return b.p - a.p;
-                    }
-                    // 2. Index Low > High (Excel order)
+                    if (b.p !== a.p) return b.p - a.p;
                     return a.originalIndex - b.originalIndex;
                 });
 
-                // Updated: show 6 teams for mixed, 5 for men
                 const maxRows = currentCategory === 'mixed' ? 6 : 5;
                 const topTeams = teams.slice(0, maxRows); 
 
@@ -702,7 +751,6 @@
             const p1Players = teamPlayersMap[match.team1] ? teamPlayersMap[match.team1].replace(/\n/g, '<br>') : '';
             const p2Players = teamPlayersMap[match.team2] ? teamPlayersMap[match.team2].replace(/\n/g, '<br>') : '';
 
-            // UPDATED: w-5 and w-3 for narrower columns, Removed styles from detail div
             return `
                 <div class="w-full ${heightClass} flex flex-col relative group z-10 lg:justify-center">
                     <div onclick="toggleMatchDetail('${match.id}')" class="w-full h-12 lg:h-[5vh] border ${borderColor} bg-white dark:bg-[#1a1a1a] rounded flex flex-row items-center px-2 relative overflow-hidden transition-all duration-500 cursor-pointer lg:cursor-default shadow-sm hover:shadow-md ${ongoingClass}">
@@ -739,9 +787,15 @@
 
         window.onload = function() {
             initTheme(); 
-            if (window.innerWidth < 1024) switchTab('groups'); 
+            if (window.innerWidth < 1024) {
+                switchTab('groups'); 
+            } else {
+                // Chỉ chạy auto switch trên desktop
+                startAutoSwitch();
+            }
             refreshData();
-            setInterval(refreshData, 300000);
+            // Fallback refresh data every 5 minutes (cho mobile hoặc khi auto switch không chạy)
+            setInterval(refreshData, 30000);
         };
     </script>
 </body>
