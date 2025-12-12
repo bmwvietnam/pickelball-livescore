@@ -588,7 +588,7 @@
                     const s = String(statusVal).toLowerCase().trim();
                     if (s === 'finished') status = 'finished'; else if (s === 'ongoing') status = 'ongoing';
                 }
-                matches.push({ id, round, team1: team1||'TBD', team2: team2||'TBD', s1: s1===''?0:s1, s2: s2===''?0:s2, status });
+                matches.push({ id, round, team1: team1||'xXx', team2: team2||'xXx', s1: s1===''?0:s1, s2: s2===''?0:s2, status });
             });
             return matches;
         }
@@ -724,7 +724,7 @@
                 const m = final[0];
                 const isFinished = m.status === 'finished';
                 const hasScore = isFinished || m.status === 'ongoing';
-                const winnerName = isFinished ? (Number(m.s1) > Number(m.s2) ? m.team1 : m.team2) : 'TBD';
+                const winnerName = isFinished ? (Number(m.s1) > Number(m.s2) ? m.team1 : m.team2) : 'xXx';
                 
                 finalHTML += `
                     <div class="flex flex-col items-center w-full lg:w-[95%] champion-box rounded-xl p-4 lg:p-[2vh] border border-bmw-blue/20 bg-gradient-to-b from-white to-gray-50 dark:from-[#0066B120] dark:to-transparent mb-6 lg:mb-0 z-10 relative shadow-xl dark:shadow-none dark:bg-black/80">
