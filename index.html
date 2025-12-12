@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="vi" class="light"> <!-- Mặc định là Light -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMW Pickleball Championship 2025</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>  
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @font-face { font-family: 'BMWTypeNext'; src: url('https://d.thaco.link/bmw/VN_BMWTypeNextLatin-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'BMWTypeNext'; src: url('https://d.thaco.link/bmw/VN_BMWTypeNextLatin-Light.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'BMWTypeNext'; src: url('https://d.thaco.link/bmw/VN_BMWTypeNextLatin-Light.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    colors: {
+                        bmw: {
+                            blue: '#0066B1',
+                            dark: '#0a0a0a',
+                            panel: '#ffffff',
+                            grey: '#6F6F6F',
+                            light: '#E6E6E6',
+                            bg: '#F3F4F6',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['BMWTypeNext', 'sans-serif'], 
+                        'heading': ['BMWTypeNext', 'sans-serif'] 
+                    },
+                    screens: {
+                        'lg': '1024px', 
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base Transition */
+        body { transition: background-color 0.5s ease, color 0.5s ease; }
+        
+        /* Backgrounds */
+        .bg-fixed-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url('https://images.netdirector.co.uk/gforces-auto/image/upload/w_377,h_251,q_auto,c_fill,f_auto,fl_lossy/auto-titan/611259484b6d6d4d824bf0da57801c99/ryder_cup.png');
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            z-index: -2; pointer-events: none; opacity: 0.1; transition: opacity 0.5s ease;
+        }
+        html.dark .bg-fixed-layer { opacity: 0.3; }
+
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(243, 244, 246, 0.9); z-index: -1; pointer-events: none;
+            transition: background-color 0.5s ease;
+        }
+        html.dark .bg-overlay { background-color: rgba(10, 10, 10, 0.95); }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            body { overflow: hidden; }
+            .text-scale-xs { font-size: 0.75vh; line-height: 1vh; } 
+            .text-scale-sm { font-size: 1.1vh; line-height: 1.3vh; }
+            .text-scale-base { font-size: 1.4vh; line-height: 1.6vh; }
+            .text-scale-lg { font-size: 1.8vh; line-height: 2vh; }
+            .text-scale-xl { font-size: 2.5vh; line-height: 2.5vh; }
+            .text-scale-2xl { font-size: 4vh; line-height: 4vh; }
+            .mobile-tabs, .mobile-category-selector, .mobile-nav-wrapper { display: none !important; }
+            #section-bracket { display: flex !important; }
+            #section-groups { display: block !important; }
+            .mobile-round-header { display: none !important; }
+            .mobile-banner { display: none !important; }
+        }
+
+        /* Mobile */
+        @media (max-width: 1023px) {
+            body { overflow-y: auto !important; height: auto; }
+            .text-scale-xs { font-size: 10px; line-height: 12px; }
+            .text-scale-sm { font-size: 12px; line-height: 14px; }
+            .text-scale-base { font-size: 14px; line-height: 18px; }
+            .text-scale-lg { font-size: 16px; line-height: 20px; }
+            .text-scale-xl { font-size: 20px; line-height: 24px; }
+            .text-scale-2xl { font-size: 24px; line-height: 28px; }
+            .mobile-tabs, .mobile-category-selector { display: flex; }
+            .dashboard-layout { flexDirection: column; padding: 10px; height: auto; }
+            
+            /* Logic expand mới: Bỏ màu nền và border khi expand */
+            .match-expanded {
+                display: block; 
+                animation: expandFade 0.3s ease-out;
+                /* Đã bỏ background gradient và border tại đây để style phẳng theo yêu cầu */
+            }
+            .match-collapsed { display: none; }
+            @keyframes expandFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        }
+
+        /* Components */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); transition: all 0.5s ease;
+        }
+        html.dark .glass-panel {
+            background: rgba(22, 22, 22, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .winner-glow { color: #0066B1; text-shadow: none; font-weight: 900; }
+        html.dark .winner-glow { color: #fff; text-shadow: 0 0 8px #0066B1; }
+        
+        .connector-line { fill: none; stroke: #d1d5db; stroke-width: 1; transition: all 0.5s ease; }
+        html.dark .connector-line { stroke: #444; }
+        .connector-line.active { stroke: #0066B1; stroke-width: 2; filter: drop-shadow(0 0 1px rgba(0, 102, 177, 0.5)); }
+
+        @keyframes pulse-blue {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 102, 177, 0.1) inset; border-color: #0066B1; }
+            50% { box-shadow: 0 0 20px rgba(0, 102, 177, 0.3) inset; border-color: #60a5fa; }
+        }
+        .champion-box { animation: pulse-blue 4s infinite; }
+        html.dark .champion-box { animation: pulse-blue 3s infinite; box-shadow: 0 0 10px #0066B1 inset; }
+
+        .rotate-180 { transform: rotate(180deg); }
+        .transition-transform { transition: transform 0.3s ease; }
+        .live-dot {
+            width: 8px; height: 8px; background-color: #ef4444; border-radius: 50%; display: inline-block;
+            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+
+        /* Button States */
+        .btn-cat-active { background-color: #0066B1; color: white; border-color: #0066B1; }
+        .btn-cat-inactive { background-color: white; color: #6b7280; border-color: transparent; }
+        .btn-cat-inactive:hover { color: #0066B1; background-color: #f3f4f6; }
+        html.dark .btn-cat-inactive { background-color: transparent; color: #9ca3af; }
+        html.dark .btn-cat-inactive:hover { color: white; background-color: rgba(255,255,255,0.1); }
+
+        /* Theme Switcher */
+        .theme-switch-btn {
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px);
+            border: 1px solid rgba(0,0,0,0.1); color: #333; transition: all 0.3s ease;
+        }
+        html.dark .theme-switch-btn {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); color: #fff;
+        }
+        .theme-switch-btn:hover { background: #0066B1; color: white; border-color: #0066B1; }
+
+        /* Ongoing Effects */
+        @keyframes neon-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 102, 177, 0.5), 0 0 10px rgba(0, 102, 177, 0.2) inset; border-color: #0066B1; }
+            50% { box-shadow: 0 0 15px #0066B1, 0 0 20px rgba(0, 102, 177, 0.4) inset; border-color: #60a5fa; }
+        }
+        html.dark .ongoing-card { animation: neon-pulse 2s infinite ease-in-out; border-width: 1px; }
+
+        @keyframes light-pulse {
+            0%, 100% { border-color: #0066B1; box-shadow: 0 0 5px rgba(0, 102, 177, 0.3); }
+            50% { border-color: #60a5fa; box-shadow: 0 0 12px rgba(0, 102, 177, 0.5); }
+        }
+        html:not(.dark) .ongoing-card { animation: light-pulse 2s infinite ease-in-out; border-width: 1px; border-style: solid; }
+        
+        /* Sponsors */
+        .sponsor-logo { opacity: 0.6; filter: grayscale(100%); transition: all 0.3s; }
+        .sponsor-logo:hover { opacity: 1; filter: grayscale(0%); }
+    </style>
+</head>
+<body class="bg-[#F3F4F6] text-gray-900 dark:bg-[#0a0a0a] dark:text-white font-sans lg:h-screen lg:w-screen flex flex-col overflow-y-auto lg:overflow-hidden">
+    <div class="bg-fixed-layer"></div>
+    <div class="bg-overlay"></div>
+
+    <button onclick="toggleTheme()" class="hidden lg:flex theme-switch-btn fixed bottom-4 right-4 z-[100] w-10 h-10 items-center justify-center rounded-full shadow-lg">
+        <i class="fas fa-moon dark:hidden"></i>
+        <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
+    </button>
+
+    <!-- HEADER -->
+    <header class="h-[60px] lg:h-[8vh] flex items-center justify-between px-4 lg:px-[3vw] bg-white/90 dark:bg-bmw-dark/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 relative z-50 shrink-0 shadow-sm transition-colors duration-500">
+        <div class="flex items-center gap-3 lg:gap-[1vw]">
+            <div class="h-10 w-auto lg:h-[5vh] flex items-center justify-center">
+                <img id="header-logo" src="https://d35wmn7bemzfye.cloudfront.net/016cb055e264cba17dedfeab958d53e1983cc9af/1747652511/images/logo.png" alt="BMW Logo" class="h-full w-auto object-contain">
+            </div>
+            <div>
+                <h1 class="text-lg lg:text-scale-xl font-black uppercase tracking-widest leading-none text-black dark:text-white transition-colors">BMW Pickleball</h1>
+                <p class="text-[10px] lg:text-scale-xs text-bmw-blue font-bold tracking-[0.3em] uppercase">Championship 2025</p>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center gap-6 mx-auto h-full py-1">
+            <span class="text-[0.8vh] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mr-2 border-r border-gray-300 dark:border-gray-700 pr-4 h-[3vh] flex items-center">Nhà tài trợ</span>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 1</span></div>
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 2</span></div>
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 3</span></div>
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 4</span></div>
+                <div class="flex items-center justify-center bg-gray-50 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-3 py-1 h-[4vh] w-[8vh] shrink-0 transition-colors"><span class="text-[0.6vh] font-bold text-gray-400 dark:text-gray-500">LOGO 5</span></div>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <button onclick="toggleTheme()" class="lg:hidden w-8 h-8 rounded-full bg-gray-100 dark:bg-[#222] flex items-center justify-center text-gray-600 dark:text-yellow-400 border border-gray-200 dark:border-gray-700">
+                <i class="fas fa-moon dark:hidden text-xs"></i>
+                <i class="fas fa-sun hidden dark:block text-xs"></i>
+            </button>
+            <div class="hidden lg:flex bg-gray-100 dark:bg-[#1a1a1a] rounded p-1 border border-gray-200 dark:border-gray-700 gap-1 transition-colors">
+                <button onclick="switchCategory('mixed')" id="btn-cat-mixed-dt" class="btn-cat-active px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300">Đôi Nam-Nữ</button>
+                <button onclick="switchCategory('men')" id="btn-cat-men-dt" class="btn-cat-inactive px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300">Đôi Nam</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE BANNER (LINK PLACEHOLDER 16:9) -->
+    <!-- Đặt trước mobile-nav-wrapper để khi scroll thì banner trôi đi, còn nav sẽ sticky -->
+    <div class="lg:hidden w-full aspect-video bg-gray-200 dark:bg-gray-800 relative group overflow-hidden">
+        <a href="#" class="block w-full h-full">
+            <!-- Placeholder Image (Thay link ảnh banner thật vào đây) -->
+            <img src="https://meetyourmatch.event-bmw.vn/result/theicon_result.jpg" alt="Mobile Banner" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors"></div>
+        </a>
+    </div>
+
+    <!-- STICKY NAV -->
+    <div class="mobile-nav-wrapper sticky top-0 z-40 flex flex-col w-full shrink-0 shadow-sm">
+        <div class="mobile-category-selector bg-white dark:bg-[#1a1a1a] p-2 gap-2 border-b border-gray-200 dark:border-gray-800 w-full transition-colors">
+            <button onclick="switchCategory('mixed')" id="btn-cat-mixed-mb" class="flex-1 py-2 text-xs font-bold uppercase rounded border transition-all duration-300 btn-cat-active border-bmw-blue">Đôi Nam-Nữ</button>
+            <button onclick="switchCategory('men')" id="btn-cat-men-mb" class="flex-1 py-2 text-xs font-bold uppercase rounded border transition-all duration-300 btn-cat-inactive border-gray-200 dark:border-gray-700">Đôi Nam</button>
+        </div>
+        <div class="mobile-tabs bg-white/95 dark:bg-[#111]/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 w-full transition-colors">
+            <button onclick="switchTab('groups')" id="tab-groups" class="flex-1 py-3 text-sm font-bold text-bmw-blue border-b-2 border-bmw-blue transition-all uppercase tracking-widest">Vòng Bảng</button>
+            <button onclick="switchTab('knockout')" id="tab-knockout" class="flex-1 py-3 text-sm font-bold text-gray-400 dark:text-gray-500 border-b-2 border-transparent transition-all uppercase tracking-widest">Vòng Knockout</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-layout flex-grow flex flex-col p-2 lg:p-[2vw] gap-4 lg:gap-[2vh] lg:overflow-hidden relative z-10">
+
+        <!-- SECTION 1: GROUPS -->
+        <section id="section-groups" class="lg:block lg:h-full w-full lg:w-[90vw] lg:mx-auto mt-4 lg:mt-0 pt-2 lg:pt-0 border-b lg:border-b-0 border-gray-200 dark:border-gray-800 pb-4 lg:pb-0">
+            <div id="loading-groups" class="hidden text-center text-gray-500 text-sm">Loading Groups...</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 lg:grid-rows-1 gap-4 lg:gap-x-[0.5vw] lg:h-full justify-center" id="groups-container">
+                <!-- Groups injected via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: BRACKET -->
+        <section id="section-bracket" class="hidden lg:h-[80vh] w-full lg:w-[90vw] lg:mx-auto flex-col lg:flex-row relative lg:mt-0 lg:border-t border-gray-200 dark:border-gray-800 pt-[1vh]">
+            <div id="loading-knockout" class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-black/80 z-10 hidden">
+                <div class="text-bmw-blue text-scale-lg animate-pulse font-bold">LOADING...</div>
+            </div>
+
+            <div class="w-full h-full flex flex-col lg:flex-row overflow-x-auto lg:overflow-visible pb-10 lg:pb-0">
+                
+                <!-- R16 COLUMN -->
+                <div id="container-r16" class="flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[18%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300">
+                    <div onclick="toggleRound('col-r16', 'icon-r16')" class="mobile-round-header flex justify-between items-center bg-white dark:bg-[#1a1a1a] shadow-sm p-3 mb-2 rounded cursor-pointer border-l-4 border-bmw-blue hover:bg-gray-50 dark:hover:bg-[#222]">
+                        <h3 class="text-bmw-blue font-bold uppercase">Vòng 1/8</h3>
+                        <i id="icon-r16" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </div>
+                    <div id="col-r16" class="flex flex-col justify-center lg:h-full space-y-2 lg:space-y-0 transition-all duration-300"></div>
+                </div>
+
+                <!-- CONNECTOR R16->QF -->
+                <div id="conn-r16-qf" class="hidden lg:flex w-[5%] h-full flex-col justify-center relative transition-all duration-300"></div>
+
+                <!-- QF COLUMN -->
+                <div id="container-qf" class="flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[18%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300">
+                    <div onclick="toggleRound('col-qf', 'icon-qf')" class="mobile-round-header flex justify-between items-center bg-white dark:bg-[#1a1a1a] shadow-sm p-3 mb-2 rounded cursor-pointer border-l-4 border-bmw-blue hover:bg-gray-50 dark:hover:bg-[#222]">
+                        <h3 class="text-bmw-blue font-bold uppercase">Tứ Kết</h3>
+                        <i id="icon-qf" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </div>
+                    <div id="col-qf" class="flex flex-col justify-center lg:h-full space-y-2 lg:space-y-0 hidden lg:flex"></div>
+                </div>
+
+                <!-- CONNECTOR QF->SF -->
+                <div id="conn-qf-sf" class="hidden lg:flex w-[5%] h-full flex-col justify-center relative transition-all duration-300"></div>
+
+                <!-- SF COLUMN -->
+                <div id="container-sf" class="flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[18%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300">
+                    <div onclick="toggleRound('col-sf', 'icon-sf')" class="mobile-round-header flex justify-between items-center bg-white dark:bg-[#1a1a1a] shadow-sm p-3 mb-2 rounded cursor-pointer border-l-4 border-bmw-blue hover:bg-gray-50 dark:hover:bg-[#222]">
+                        <h3 class="text-bmw-blue font-bold uppercase">Bán Kết</h3>
+                        <i id="icon-sf" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </div>
+                    <div id="col-sf" class="flex flex-col justify-center lg:h-full space-y-2 lg:space-y-0 hidden lg:flex"></div>
+                </div>
+
+                <!-- CONNECTOR SF->FINAL -->
+                <div id="conn-sf-final" class="hidden lg:flex w-[5%] h-full flex-col justify-center relative transition-all duration-300"></div>
+
+                <!-- FINAL COLUMN -->
+                <div id="container-final" class="flex flex-col justify-start lg:justify-center items-center lg:h-full w-full lg:w-[31%] min-w-[300px] lg:min-w-0 transition-all duration-300">
+                    <div onclick="toggleRound('col-final', 'icon-final')" class="mobile-round-header w-full flex justify-between items-center bg-white dark:bg-[#1a1a1a] shadow-sm p-3 mb-2 rounded cursor-pointer border-l-4 border-bmw-blue hover:bg-gray-50 dark:hover:bg-[#222]">
+                        <h3 class="text-bmw-blue font-bold uppercase">Chung Kết</h3>
+                        <i id="icon-final" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </div>
+                    <div id="col-final" class="w-full flex flex-col items-center hidden lg:flex"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER MOBILE -->
+    <footer class="lg:hidden w-full bg-white dark:bg-[#0a0a0a] border-t border-gray-200 dark:border-gray-800 shrink-0 z-50 py-4 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] transition-colors">
+        <div class="container mx-auto h-full px-4 flex flex-col items-center justify-center gap-3">
+            <div class="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest whitespace-nowrap">Đơn vị tài trợ</div>
+            <div class="flex flex-wrap justify-center gap-2 w-full px-2">
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 1</span></div>
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 2</span></div>
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 3</span></div>
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 4</span></div>
+                <div class="flex items-center justify-center bg-gray-100 dark:bg-[#222] rounded border border-gray-200 dark:border-gray-700 px-4 py-2 min-w-[100px] shrink-0"><span class="text-xs font-bold text-gray-400 dark:text-gray-500">LOGO 5</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC -->
+    <script>
+        const SHEET_ID = '1u46Ea-jYE2B0HFC6bNq7J7UOSs6NBfOHhSO58oXLLrU'; 
+        
+        const CATEGORIES = {
+            men: { name: 'Đôi Nam', groups: 'vongloai', knockout: 'knockout' },
+            mixed: { name: 'Đôi Nam-Nữ', groups: 'vongloai2', knockout: 'knockout2' }
+        };
+
+        // Default set to 'mixed'
+        let currentCategory = 'mixed';
+        let teamPlayersMap = {};
+        const LIGHT_LOGO = 'https://d35wmn7bemzfye.cloudfront.net/016cb055e264cba17dedfeab958d53e1983cc9af/1747652511/images/logo.png';
+        const DARK_LOGO = 'https://d.thaco.link/bmw/l-logo.png';
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const logo = document.getElementById('header-logo');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark'); localStorage.setItem('theme', 'light'); logo.src = LIGHT_LOGO;
+            } else {
+                html.classList.add('dark'); localStorage.setItem('theme', 'dark'); logo.src = DARK_LOGO;
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const logo = document.getElementById('header-logo');
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark'); logo.src = DARK_LOGO;
+            } else {
+                logo.src = LIGHT_LOGO;
+            }
+        }
+
+        function switchCategory(catId) {
+            if (currentCategory === catId) return; 
+            currentCategory = catId;
+            const btnMenDt = document.getElementById('btn-cat-men-dt');
+            const btnMixedDt = document.getElementById('btn-cat-mixed-dt');
+            const btnMenMb = document.getElementById('btn-cat-men-mb');
+            const btnMixedMb = document.getElementById('btn-cat-mixed-mb');
+            
+            const activeClass = "btn-cat-active px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300";
+            const inactiveClass = "btn-cat-inactive px-4 py-1 rounded text-scale-xs font-bold uppercase transition-all duration-300";
+            const mbActiveClass = "flex-1 py-2 text-xs font-bold uppercase rounded border transition-all duration-300 btn-cat-active border-bmw-blue";
+            const mbInactiveClass = "flex-1 py-2 text-xs font-bold uppercase rounded border transition-all duration-300 btn-cat-inactive border-gray-200 dark:border-gray-700";
+
+            if (catId === 'men') {
+                btnMenDt.className = activeClass; btnMixedDt.className = inactiveClass;
+                btnMenMb.className = mbActiveClass; btnMixedMb.className = mbInactiveClass;
+            } else {
+                btnMenDt.className = inactiveClass; btnMixedDt.className = activeClass;
+                btnMenMb.className = mbInactiveClass; btnMixedMb.className = mbActiveClass;
+            }
+            teamPlayersMap = {};
+            refreshData();
+        }
+
+        function toggleRound(colId, iconId) {
+            if (window.innerWidth >= 1024) return;
+            document.getElementById(colId).classList.toggle('hidden');
+            document.getElementById(colId).classList.toggle('flex');
+            document.getElementById(iconId)?.classList.toggle('rotate-180');
+        }
+
+        function toggleMatchDetail(matchId) {
+            if (window.innerWidth >= 1024) return;
+            const detailEl = document.getElementById(`detail-${matchId}`);
+            detailEl.classList.toggle('match-collapsed'); detailEl.classList.toggle('match-expanded');
+        }
+
+        function toggleGroupDetail(teamId) {
+            if (window.innerWidth >= 1024) return;
+            document.getElementById(teamId)?.classList.toggle('hidden');
+        }
+
+        function switchTab(tab) {
+            const bracketSec = document.getElementById('section-bracket');
+            const groupsSec = document.getElementById('section-groups');
+            const btnKnockout = document.getElementById('tab-knockout');
+            const btnGroups = document.getElementById('tab-groups');
+
+            if (tab === 'knockout') {
+                bracketSec.classList.remove('hidden'); bracketSec.classList.add('flex');
+                groupsSec.classList.remove('block'); groupsSec.classList.add('hidden');
+                btnKnockout.className = "flex-1 py-3 text-sm font-bold text-bmw-blue border-b-2 border-bmw-blue transition-all uppercase tracking-widest";
+                btnGroups.className = "flex-1 py-3 text-sm font-bold text-gray-400 dark:text-gray-500 border-b-2 border-transparent transition-all uppercase tracking-widest";
+            } else {
+                bracketSec.classList.remove('flex'); bracketSec.classList.add('hidden');
+                groupsSec.classList.remove('hidden'); groupsSec.classList.add('block');
+                btnKnockout.className = "flex-1 py-3 text-sm font-bold text-gray-400 dark:text-gray-500 border-b-2 border-transparent transition-all uppercase tracking-widest";
+                btnGroups.className = "flex-1 py-3 text-sm font-bold text-bmw-blue border-b-2 border-bmw-blue transition-all uppercase tracking-widest";
+            }
+        }
+
+        async function fetchSheetData(sheetName) {
+            try {
+                const response = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`);
+                const text = await response.text();
+                return JSON.parse(text.substring(47).slice(0, -2)).table.rows;
+            } catch (error) { console.error(`Error ${sheetName}:`, error); return []; }
+        }
+
+        function getVal(cell) { return cell ? (cell.v !== null ? cell.v : '') : ''; }
+
+        async function refreshData() {
+            const currentSheets = CATEGORIES[currentCategory];
+            const expandedIds = Array.from(document.querySelectorAll('.match-expanded')).map(el => el.id);
+            const expandedGroups = Array.from(document.querySelectorAll('[id^="g-detail-"]:not(.hidden)')).map(el => el.id);
+
+            document.getElementById('loading-groups').style.display = 'block';
+            document.getElementById('loading-knockout').style.display = 'flex';
+
+            const [groupsRows, knockoutRows] = await Promise.all([
+                fetchSheetData(currentSheets.groups),
+                fetchSheetData(currentSheets.knockout)
+            ]);
+
+            renderGroups(processGroupsData(groupsRows));
+            renderBracket(processKnockoutData(knockoutRows));
+
+            document.getElementById('loading-groups').style.display = 'none';
+            document.getElementById('loading-knockout').style.display = 'none';
+
+            expandedIds.forEach(id => { const el = document.getElementById(id); if(el) { el.classList.remove('match-collapsed'); el.classList.add('match-expanded'); } });
+            expandedGroups.forEach(id => document.getElementById(id)?.classList.remove('hidden'));
+        }
+
+        function processGroupsData(rows) {
+            const groups = {}; 
+            teamPlayersMap = {}; 
+            
+            // UPDATED: Capture index for stable sort
+            rows.forEach((row, index) => {
+                const c = row.c; if (!c || c.length === 0) return;
+                
+                const groupName = getVal(c[0]); 
+                const teamName = getVal(c[1]); 
+                
+                // UPDATED: Points and Wins now both from Column C (index 2)
+                const points = getVal(c[2]); 
+                const players = getVal(c[5]); 
+
+                if (!groupName || !teamName) return; 
+                if (teamName) teamPlayersMap[teamName] = players;
+                if (!groups[groupName]) groups[groupName] = [];
+                
+                groups[groupName].push({ 
+                    name: teamName, 
+                    p: points === '' ? 0 : Number(points), 
+                    w: points === '' ? 0 : Number(points),
+                    players: players || '',
+                    originalIndex: index // UPDATED: Store Excel row index
+                });
+            });
+            return groups;
+        }
+
+        function processKnockoutData(rows) {
+            const matches = [];
+            rows.forEach(row => {
+                const c = row.c; if (!c || c.length === 0) return;
+                const id = getVal(c[0]); const team1 = getVal(c[1]); const team2 = getVal(c[2]); 
+                const s1 = getVal(c[3]); const s2 = getVal(c[4]); const statusVal = getVal(c[5]); 
+                if (!id) return;
+                let round = 'Other';
+                if (id.includes('R16') || id.includes('1/8')) round = 'R16';
+                else if (id.includes('QF') || id.includes('TK')) round = 'QF';
+                else if (id.includes('SF') || id.includes('BK')) round = 'SF';
+                else if (id.includes('FINAL') || id.includes('CK')) round = 'FINAL';
+                else if (id.includes('3RD') || id.includes('H3')) round = '3RD';
+                
+                let status = 'upcoming'; 
+                if (statusVal) {
+                    const s = String(statusVal).toLowerCase().trim();
+                    if (s === 'finished') status = 'finished'; else if (s === 'ongoing') status = 'ongoing';
+                }
+                matches.push({ id, round, team1: team1||'TBD', team2: team2||'TBD', s1: s1===''?0:s1, s2: s2===''?0:s2, status });
+            });
+            return matches;
+        }
+
+        // RENDER GROUPS
+        function renderGroups(data) {
+            const container = document.getElementById('groups-container');
+            container.innerHTML = '';
+            const sortedKeys = Object.keys(data).sort(); 
+            const displayKeys = sortedKeys.slice(0, 8); 
+            
+            if (currentCategory === 'mixed') {
+                container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-1 gap-4 lg:gap-x-[1vw] lg:h-full justify-center";
+            } else {
+                container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 lg:grid-rows-1 gap-4 lg:gap-x-[0.5vw] lg:h-full";
+            }
+
+            displayKeys.forEach(groupName => {
+                const teams = data[groupName];
+                
+                // UPDATED: Logic Sort
+                teams.sort((a, b) => {
+                    // 1. Point High > Low
+                    if (b.p !== a.p) {
+                        return b.p - a.p;
+                    }
+                    // 2. Index Low > High (Excel order)
+                    return a.originalIndex - b.originalIndex;
+                });
+
+                // Updated: show 6 teams for mixed, 5 for men
+                const maxRows = currentCategory === 'mixed' ? 6 : 5;
+                const topTeams = teams.slice(0, maxRows); 
+
+                let rowsHTML = '';
+                
+                for(let i=0; i<maxRows; i++) {
+                    const team = topTeams[i] || { name: '-', w: '-', players: '' };
+                    const isTop = i < 2; const isReal = team.name !== '-';
+                    
+                    const rowColor = isTop && isReal ? 'text-bmw-blue dark:text-yellow-400 font-bold' : 'text-gray-600 dark:text-gray-400';
+                    const scoreColor = isTop && isReal ? 'text-bmw-blue dark:text-yellow-400' : 'text-gray-500 dark:text-gray-600';
+                    const bgRow = i % 2 === 0 ? 'bg-gray-50 dark:bg-white/5' : '';
+                    const detailId = `g-detail-${groupName}-${i}`;
+                    const playersHTML = team.players ? team.players.replace(/\n/g, '<br>') : '';
+                    
+                    rowsHTML += `
+                        <div onclick="toggleGroupDetail('${detailId}')" class="flex-1 min-h-0 flex justify-between items-center px-2 py-1 ${bgRow} cursor-pointer lg:cursor-default hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
+                            <div class="flex items-center gap-2 overflow-hidden flex-1 min-w-0">
+                                <span class="text-xs lg:text-[1.1vh] font-bold w-4 shrink-0 ${scoreColor}">${i + 1}</span>
+                                <span class="text-xs lg:text-[1.1vh] ${rowColor} truncate font-medium leading-none py-[0.2vh]">${team.name}</span>
+                            </div>
+                            <div class="flex shrink-0"><span class="text-xs lg:text-[1.1vh] font-bold ${scoreColor} w-8 text-center">${team.w}</span></div>
+                        </div>
+                        <div id="${detailId}" class="hidden lg:hidden bg-gray-50 dark:bg-black px-4 py-2 border-b border-gray-200 dark:border-gray-800">
+                            <div class="text-[10px] text-gray-500 dark:text-gray-400 pl-3 border-l-2 border-bmw-blue">${playersHTML || '...'}</div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="glass-panel rounded overflow-hidden flex flex-col h-auto lg:h-full border border-gray-200 dark:border-gray-800 shadow-sm">
+                        <div class="bg-bmw-blue px-2 py-1 lg:py-[0.5vh] flex justify-between items-center shrink-0 h-[4vh] lg:h-auto">
+                            <span class="text-sm lg:text-[1.2vh] font-black uppercase text-white leading-none">Bảng ${groupName}</span>
+                            <div class="flex"><span class="text-[10px] lg:text-[0.9vh] text-white/80 uppercase tracking-wider w-8 text-center font-bold">WIN</span></div>
+                        </div>
+                        <div class="flex-col grow bg-white dark:bg-[#111] flex justify-between lg:overflow-hidden">${rowsHTML}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // RENDER BRACKET
+        function renderBracket(matches) {
+            const isFin = (m) => m && m.status === 'finished';
+            const r16 = matches.filter(m => m.round === 'R16');
+            const qf = matches.filter(m => m.round === 'QF');
+            const sf = matches.filter(m => m.round === 'SF');
+            const final = matches.filter(m => m.round === 'FINAL');
+            const third = matches.filter(m => m.round === '3RD');
+
+            const isMixed = currentCategory === 'mixed';
+            const containerR16 = document.getElementById('container-r16');
+            const connR16QF = document.getElementById('conn-r16-qf');
+            const containerQF = document.getElementById('container-qf');
+            const containerSF = document.getElementById('container-sf');
+            const containerFinal = document.getElementById('container-final');
+
+            if (isMixed) {
+                containerR16.classList.remove('lg:flex', 'lg:w-[18%]', 'flex'); 
+                containerR16.classList.add('hidden', 'lg:hidden'); 
+                connR16QF.classList.remove('lg:flex'); 
+                connR16QF.classList.add('hidden', 'lg:hidden');
+
+                containerQF.className = "flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[28%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300";
+                containerSF.className = "flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[28%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300";
+                containerFinal.className = "flex flex-col justify-start lg:justify-center items-center lg:h-full w-full lg:w-[34%] min-w-[300px] lg:min-w-0 transition-all duration-300";
+            } else {
+                containerR16.classList.remove('hidden', 'lg:hidden'); 
+                containerR16.classList.add('flex', 'lg:flex', 'lg:w-[18%]'); 
+                connR16QF.classList.remove('hidden', 'lg:hidden'); 
+                connR16QF.classList.add('hidden', 'lg:flex'); 
+
+                containerQF.className = "flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[18%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300";
+                containerSF.className = "flex flex-col justify-start lg:justify-center lg:h-full w-full lg:w-[18%] space-y-2 lg:space-y-0 min-w-[300px] lg:min-w-0 mb-2 lg:mb-0 transition-all duration-300";
+                containerFinal.className = "flex flex-col justify-start lg:justify-center items-center lg:h-full w-full lg:w-[31%] min-w-[300px] lg:min-w-0 transition-all duration-300";
+            }
+
+            if (!isMixed) {
+                document.getElementById('col-r16').innerHTML = r16.map(m => createMatchCard(m, 'h-auto lg:h-[7.5vh]')).join('');
+                let connR16QFHTML = '';
+                for (let i = 0; i < 4; i++) connR16QFHTML += `<div class="h-[15vh]">${renderConnectorSVG(r16[i*2], r16[i*2+1], isFin(r16[i*2]), isFin(r16[i*2+1]))}</div>`;
+                document.getElementById('conn-r16-qf').innerHTML = connR16QFHTML;
+            } else {
+                document.getElementById('col-r16').innerHTML = '';
+                document.getElementById('conn-r16-qf').innerHTML = '';
+            }
+
+            document.getElementById('col-qf').innerHTML = qf.map(m => createMatchCard(m, 'h-auto lg:h-[15vh]')).join('');
+            document.getElementById('col-sf').innerHTML = sf.map(m => createMatchCard(m, 'h-auto lg:h-[30vh]')).join('');
+
+            let connQFSFHTML = '';
+            for (let i = 0; i < 2; i++) connQFSFHTML += `<div class="h-[30vh]">${renderConnectorSVG(qf[i*2], qf[i*2+1], isFin(qf[i*2]), isFin(qf[i*2+1]))}</div>`;
+            document.getElementById('conn-qf-sf').innerHTML = connQFSFHTML;
+
+            if (sf.length >= 2) document.getElementById('conn-sf-final').innerHTML = renderFinalConnector(isFin(sf[0]), isFin(sf[1]));
+
+            const finalContainer = document.getElementById('col-final');
+            let finalHTML = '';
+            const catName = CATEGORIES[currentCategory].name.toUpperCase();
+            
+            finalHTML += `
+                <div class="hidden lg:flex flex-col items-center mb-[4vh]">
+                    <span class="text-gray-400 dark:text-bmw-grey text-scale-sm font-bold uppercase tracking-[0.5em] mb-[1vh]">Thể Thức Thi Đấu</span>
+                    <span class="text-bmw-blue dark:text-white text-scale-2xl font-black uppercase tracking-widest winner-glow">${catName}</span>
+                </div>
+            `;
+            
+            if (final.length > 0) {
+                const m = final[0];
+                const isFinished = m.status === 'finished';
+                const hasScore = isFinished || m.status === 'ongoing';
+                const winnerName = isFinished ? (Number(m.s1) > Number(m.s2) ? m.team1 : m.team2) : 'TBD';
+                
+                finalHTML += `
+                    <div class="flex flex-col items-center w-full lg:w-[95%] champion-box rounded-xl p-4 lg:p-[2vh] border border-bmw-blue/20 bg-gradient-to-b from-white to-gray-50 dark:from-[#0066B120] dark:to-transparent mb-6 lg:mb-0 z-10 relative shadow-xl dark:shadow-none dark:bg-black/80">
+                        <div class="text-bmw-blue text-xs lg:text-scale-sm font-bold uppercase tracking-[0.5em] mb-2 lg:mb-[1vh]">Championship</div>
+                        <div class="flex items-center justify-between w-full mb-4 lg:mb-[2vh] flex-nowrap">
+                            <div class="flex-1 text-base lg:text-scale-lg font-bold text-gray-900 dark:text-white text-right truncate min-w-0">${m.team1}</div>
+                            <div class="shrink-0 bg-bmw-blue dark:bg-white text-white dark:text-black font-black text-2xl lg:text-scale-2xl px-2 lg:px-[2vh] py-1 lg:py-[1vh] rounded mx-2 lg:mx-[1vh] whitespace-nowrap shadow-md">
+                                ${hasScore ? m.s1 : '-'} : ${hasScore ? m.s2 : '-'}
+                            </div>
+                            <div class="flex-1 text-base lg:text-scale-lg font-bold text-gray-900 dark:text-white text-left truncate min-w-0">${m.team2}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-[10px] lg:text-scale-xs text-gray-400 dark:text-gray-400 uppercase tracking-widest mb-1">2025 Champion</div>
+                            <div class="text-xl lg:text-scale-xl font-black text-bmw-blue dark:text-white uppercase winner-glow truncate max-w-[80vw] lg:max-w-[20vw]">
+                                ${winnerName}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (third.length > 0) {
+                finalHTML += `
+                    <div class="mt-4 lg:mt-[4vh] w-full max-w-xs lg:w-[60%] opacity-80 z-10 mx-auto">
+                        <div class="text-center text-gray-400 dark:text-gray-500 text-[10px] lg:text-scale-xs uppercase tracking-widest mb-1">Bronze Match</div>
+                        ${createMatchCard(third[0], 'h-auto lg:h-[6vh]')}
+                    </div>
+                `;
+            }
+            finalContainer.innerHTML = finalHTML;
+        }
+
+        // SVG Renderers
+        function renderConnectorSVG(matchA, matchB, isWinnerA, isWinnerB) {
+            const classA = isWinnerA ? 'active' : ''; const classB = isWinnerB ? 'active' : '';
+            return `<div class="w-full h-full flex items-center justify-center"><svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,25 L50,25 L50,50 L100,50" class="connector-line ${classA}" vector-effect="non-scaling-stroke"/><path d="M0,75 L50,75 L50,50 L100,50" class="connector-line ${classB}" vector-effect="non-scaling-stroke"/></svg></div>`;
+        }
+        function renderFinalConnector(sf1Status, sf2Status) {
+            const classA = sf1Status ? 'active' : ''; const classB = sf2Status ? 'active' : '';
+             return `<div class="w-full h-full flex items-center justify-center"><svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,25 L50,25 L50,50 L100,50" class="connector-line ${classA}" vector-effect="non-scaling-stroke"/><path d="M0,75 L50,75 L50,50 L100,50" class="connector-line ${classB}" vector-effect="non-scaling-stroke"/></svg></div>`;
+        }
+
+        function createMatchCard(match, heightClass) {
+            const isFinished = match.status === 'finished';
+            const isOngoing = match.status === 'ongoing';
+            const hasScore = isFinished || isOngoing; 
+            const s1 = Number(match.s1); const s2 = Number(match.s2);
+            const p1Win = isFinished && s1 > s2; const p2Win = isFinished && s2 > s1;
+
+            const p1Color = p1Win ? 'text-bmw-blue dark:text-yellow-400 font-bold' : (hasScore ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400');
+            const p2Color = p2Win ? 'text-bmw-blue dark:text-yellow-400 font-bold' : (hasScore ? 'text-gray-400 dark:text-gray-500' : 'text-gray-500 dark:text-gray-400');
+            const scoreColor = hasScore ? 'text-bmw-blue dark:text-white' : 'text-gray-400 dark:text-gray-600';
+            
+            let borderColor = 'border-gray-200 dark:border-gray-800';
+            if (p1Win || p2Win) borderColor = 'border-bmw-blue shadow-md';
+            
+            let ongoingClass = isOngoing ? 'ongoing-card' : '';
+            if (isOngoing) borderColor = 'border-bmw-blue';
+
+            let footerStatusHTML = isFinished 
+                ? '<span class="px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded text-[10px] uppercase text-gray-500 font-bold">Finished</span>'
+                : (isOngoing 
+                    ? '<span class="px-2 py-1 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded text-[10px] uppercase text-red-500 font-bold flex items-center gap-2"><span class="live-dot"></span> LIVE</span>'
+                    : '<span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-[10px] uppercase text-gray-400 font-bold">Upcoming</span>');
+
+            const p1Players = teamPlayersMap[match.team1] ? teamPlayersMap[match.team1].replace(/\n/g, '<br>') : '';
+            const p2Players = teamPlayersMap[match.team2] ? teamPlayersMap[match.team2].replace(/\n/g, '<br>') : '';
+
+            // UPDATED: w-5 and w-3 for narrower columns, Removed styles from detail div
+            return `
+                <div class="w-full ${heightClass} flex flex-col relative group z-10 lg:justify-center">
+                    <div onclick="toggleMatchDetail('${match.id}')" class="w-full h-12 lg:h-[5vh] border ${borderColor} bg-white dark:bg-[#1a1a1a] rounded flex flex-row items-center px-2 relative overflow-hidden transition-all duration-500 cursor-pointer lg:cursor-default shadow-sm hover:shadow-md ${ongoingClass}">
+                        <div class="absolute -top-1 lg:-top-[1vh] left-1/2 -translate-x-1/2 bg-gray-100 dark:bg-black px-1 text-[8px] lg:text-[0.8vh] text-gray-500 uppercase tracking-widest z-10 border border-gray-200 dark:border-gray-800 rounded-b dark:hidden">${match.id}</div>
+                        <div class="flex-1 text-right truncate text-xs lg:text-scale-sm ${p1Color} pr-3 relative z-10">${match.team1}</div>
+                        <div class="h-full px-2 lg:px-[1vh] bg-gray-50 dark:bg-black/40 flex flex-row items-center justify-center border-x border-gray-100 dark:border-gray-800 shrink-0 gap-1 lg:gap-[0.5vh] relative z-10">
+                            <div class="text-sm lg:text-scale-base font-black ${scoreColor} leading-none w-5 text-center">${hasScore ? s1 : '-'}</div>
+                            <div class="text-[10px] lg:text-[0.8vh] text-gray-400 font-bold uppercase w-3 text-center">VS</div>
+                            <div class="text-sm lg:text-scale-base font-black ${scoreColor} leading-none w-5 text-center">${hasScore ? s2 : '-'}</div>
+                        </div>
+                        <div class="flex-1 text-left truncate text-xs lg:text-scale-sm ${p2Color} pl-3 relative z-10">${match.team2}</div>
+                    </div>
+                    <div id="detail-${match.id}" class="match-collapsed lg:hidden">
+                        <div class="flex flex-col items-center gap-4 mt-2 p-2">
+                             <div class="flex items-center justify-between w-full">
+                                <div class="flex-1 flex flex-col items-center text-center">
+                                    <span class="text-3xl font-black ${p1Win ? 'text-bmw-blue' : 'text-gray-800 dark:text-white'} leading-none mb-2">${hasScore ? s1 : '-'}</span>
+                                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">${match.team1}</span>
+                                    <div class="text-[10px] text-gray-500 mt-1 leading-tight">${p1Players}</div>
+                                </div>
+                                <div class="text-gray-400 font-bold text-xl px-4">VS</div>
+                                <div class="flex-1 flex flex-col items-center text-center">
+                                    <span class="text-3xl font-black ${p2Win ? 'text-bmw-blue' : 'text-gray-800 dark:text-white'} leading-none mb-2">${hasScore ? s2 : '-'}</span>
+                                    <span class="text-sm font-bold text-gray-700 dark:text-gray-300">${match.team2}</span>
+                                    <div class="text-[10px] text-gray-500 mt-1 leading-tight">${p2Players}</div>
+                                </div>
+                             </div>
+                             <div class="w-full text-center">${footerStatusHTML}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            initTheme(); 
+            if (window.innerWidth < 1024) switchTab('groups'); 
+            refreshData();
+            setInterval(refreshData, 300000);
+        };
+    </script>
+</body>
+</html>
